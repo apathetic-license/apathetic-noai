@@ -1,0 +1,21 @@
+{
+    // Apathetic License Collective membership list
+    // Each entry represents a member organization or individual
+    "members": [
+        // Apathetic Tools
+        {
+            // The main repository using aNOAI
+            "repos": [
+                "https://github.com/apathetic-license/apathetic-noai",
+            ],
+            // Organization for voting purposes
+            "org": "https://github.com/apathetic-tools",
+            // Representative account for voting
+            "representative": "https://github.com/InertSloth",
+            // Optional note for human readability
+            "notes": "Initial member of the collective",
+            // Date submitted for membership
+            "submitted": "2025-11-09",
+        },
+    ]
+}
