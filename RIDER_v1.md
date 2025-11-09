@@ -17,5 +17,5 @@ In addition to the permissions and conditions of the Base License:
 4. This Rider is **Version 1 or later**, as published by the **Apathetic License
    Collective**. You may use this version or any later version, which may modify,
    replace, or entirely remove these restrictions. The canonical source for the
-   latest version is: [https://github.com/apathetic-license/apathetic-noai](https://
-   github.com/apathetic-license/apathetic-noai)
+   latest version is:
+   [https://github.com/apathetic-license/apathetic-noai](https://github.com/apathetic-license/apathetic-noai)
