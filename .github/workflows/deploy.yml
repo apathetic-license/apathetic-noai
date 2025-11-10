@@ -1,0 +1,102 @@
+# .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+
+# job constants
+env:
+  DEPLOY_REPO: apathetic-license/apathetic-license.github.io
+  DEPLOY_BRANCH: gh-pages
+  ENABLE_JEKYLL: true
+  DEPLOY_README_BRANCH: main
+  ENABLE_JEKYLL_README: true
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.job }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build site
+        run: |
+          bundle exec jekyll build -d ./_dist
+
+      - name: Upload artifact gh-pages        
+        if: github.ref == 'refs/heads/main' # only deploy main        
+        id: upload-gh-pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ./_dist
+
+    outputs:
+      artifact_gh_pages: ${{ steps.upload-gh-pages.outputs.artifact-id }}
+
+  deploy_gh_pages:
+    if: needs.build.outputs.artifact_gh_pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+
+    steps:
+      - name: Verify Secrets
+        run: |
+          if [ -z "${{ secrets.DEPLOYBOT_APP_ID }}" ]; then
+            echo "❌ DEPLOYBOT_APP_ID is not set!"
+            exit 1
+          fi    
+
+          if [ -z "${{ secrets.DEPLOYBOT_APP_PRIVATE_KEY }}" ]; then
+            echo "❌ DEPLOYBOT_APP_PRIVATE_KEY is not set!"
+            exit 1
+          fi    
+
+      - name: Download build output        
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: ./_dist           
+
+      - name: Mint GitHub App token
+        id: app-token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.DEPLOYBOT_APP_ID }}
+          private_key: ${{ secrets.DEPLOYBOT_APP_PRIVATE_KEY }} 
+
+      - name: Push to target
+        env:
+          DEPLOY_TOKEN: ${{ steps.app-token.outputs.token }}
+          DEPLOY_REPO: ${{ env.DEPLOY_REPO }}
+          DEPLOY_BRANCH: ${{ env.DEPLOY_BRANCH }}
+        run: |
+          git clone --depth=1 \
+            -b ${DEPLOY_BRANCH} \
+            https://x-access-token:${DEPLOY_TOKEN}@github.com/${DEPLOY_REPO}.git \
+            out
+          rsync -av --delete _dist/ out/
+          cd out
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Deploy from source $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes to commit"
+          git push origin ${DEPLOY_BRANCH}

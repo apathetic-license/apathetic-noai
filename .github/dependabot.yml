@@ -1,0 +1,9 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  # Monitor GitHub Actions for updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Keeps actions like actions/checkout, actions/setup-python up to date

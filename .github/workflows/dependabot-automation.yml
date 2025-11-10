@@ -1,0 +1,27 @@
+# .github/workflows/dependabot-automation.yml
+#
+# Automates Dependabot PRs by:
+# 1. Auto-merging the PR if all checks pass
+#
+# Runs for all dependabot PRs (Python dependencies and GitHub Actions updates).
+#
+# Security: Only runs when github.actor == 'dependabot[bot]', which cannot be spoofed
+# by external users. This is a GitHub-guaranteed trusted identity.
+#
+name: Dependabot Automation
+
+on:
+  pull_request:
+
+jobs:
+  automate:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:        
+      - name: Auto-merge Dependabot PR
+        run: gh pr merge --auto --squash "${{ github.event.pull_request.html_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
