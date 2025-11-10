@@ -101,7 +101,7 @@ jobs:
           fi
 
           # Copy new files
-          rsync -av --delete ../_dist/ ./
+          rsync -av --delete -exclude='.git' ../_dist/ ./
 
           # Commit and push
           git config user.name "github-actions[bot]"
