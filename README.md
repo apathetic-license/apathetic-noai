@@ -79,7 +79,7 @@ The Collective is intended to be **lightweight, transparent, and apolitical**,
 providing a community-backed mechanism for versioning the Rider without
 overcomplicating adoption.
 
-## License
+## Repository License
 
 This repository is licensed under the MIT License with the **Apathetic No-AI
 Use Rider v1.0 or later**. See [LICENSE](LICENSE) for details.
