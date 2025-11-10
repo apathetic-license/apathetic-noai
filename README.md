@@ -25,8 +25,7 @@ The Rider is **Version 1 or later**. Later versions may modify, replace, or
 remove these restrictions. Always refer to the canonical source for the
 latest version:
 
-[https://github.com/apathetic-license/apathetic-noai](https://github.com/
-apathetic-license/apathetic-noai)
+[https://github.com/apathetic-license/apathetic-noai](https://github.com/apathetic-license/apathetic-noai)
 
 > [!WARNING]
 > Adding this Rider changes the rights users have under your Base license,
