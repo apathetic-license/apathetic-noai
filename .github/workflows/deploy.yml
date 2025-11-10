@@ -88,14 +88,24 @@ jobs:
           DEPLOY_REPO: ${{ env.DEPLOY_REPO }}
           DEPLOY_BRANCH: ${{ env.DEPLOY_BRANCH }}
         run: |
-          git clone --depth=1 \
-            -b ${DEPLOY_BRANCH} \
-            https://x-access-token:${DEPLOY_TOKEN}@github.com/${DEPLOY_REPO}.git \
-            out
-          rsync -av --delete _dist/ out/
+          # Clone the repo, or init if branch doesn't exist
+          git clone https://x-access-token:${DEPLOY_TOKEN}@github.com/${DEPLOY_REPO}.git out || true
           cd out
+
+          # Make sure we're on the deploy branch
+          if git show-ref --quiet refs/heads/${DEPLOY_BRANCH}; then
+            git checkout ${DEPLOY_BRANCH}
+          else
+            git checkout --orphan ${DEPLOY_BRANCH}
+            git rm -rf .
+          fi
+
+          # Copy new files
+          rsync -av --delete ../_dist/ ./
+
+          # Commit and push
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           git commit -m "Deploy from source $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes to commit"
-          git push origin ${DEPLOY_BRANCH}
+          git push -u origin ${DEPLOY_BRANCH} --force
