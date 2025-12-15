@@ -41,7 +41,7 @@ jobs:
       - name: Upload artifact gh-pages        
         if: github.ref == 'refs/heads/main' # only deploy main        
         id: upload-gh-pages
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: github-pages
           path: ./_dist
