@@ -70,7 +70,7 @@ jobs:
           fi    
 
       - name: Download build output        
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: github-pages
           path: ./_dist
